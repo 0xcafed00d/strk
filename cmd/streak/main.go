@@ -8,7 +8,8 @@ import (
 )
 
 func main() {
-	repos, err := streak.GetRepos("simulatedsimian")
+
+	repos, err := streak.GetRepos("simulatedsimian", os.Args[1])
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

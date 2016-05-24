@@ -14,7 +14,7 @@ type Repo struct {
 	LastSHA     string
 }
 
-func makeGetReposURL(pageNumber int, user, apiToken string) string {
+func makeGetReposURL(pageNumber int, user string) string {
 	return fmt.Sprintf("https://api.github.com/users/%s/repos?page=%d", user, pageNumber)
 }
 
@@ -27,15 +27,16 @@ func hasMorePages(h http.Header) bool {
 	return false
 }
 
-func GetRepos(user string) (ReposJSON, error) {
+func GetRepos(user, apiToken string) (ReposJSON, error) {
 	morePages := true
 	var allrepos ReposJSON
 
 	for pageNumber := 1; morePages; pageNumber++ {
-		r, err := http.NewRequest("GET", makeGetReposURL(pageNumber, user, ""), nil)
+		r, err := http.NewRequest("GET", makeGetReposURL(pageNumber, user), nil)
 		if err != nil {
 			return nil, err
 		}
+		r.Header["Authorization"] = []string{"token " + apiToken}
 
 		client := &http.Client{}
 		resp, err := client.Do(r)
