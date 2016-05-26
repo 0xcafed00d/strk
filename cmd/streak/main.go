@@ -15,7 +15,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	for i := range repos {
-		fmt.Println(repos[i].Name)
+	for _, v := range *repos {
+		fmt.Println(v.Name)
 	}
 }

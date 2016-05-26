@@ -16,7 +16,7 @@ func makeGetReposURL(pageNumber int, user string) string {
 	return fmt.Sprintf("https://api.github.com/users/%s/repos?page=%d", user, pageNumber)
 }
 
-func GetRepos(user, apiToken string) (ReposJSON, error) {
+func GetRepos(user, apiToken string) (*ReposJSON, error) {
 	var allrepos ReposJSON
 
 	morePages := true
@@ -37,5 +37,5 @@ func GetRepos(user, apiToken string) (ReposJSON, error) {
 		morePages = hasMorePages(resp.Header)
 	}
 
-	return allrepos, nil
+	return &allrepos, nil
 }

@@ -29,7 +29,10 @@ func doAuthorizedRequest(method, URL, apiToken string, body io.Reader) (resp *ht
 	if err != nil {
 		return
 	}
-	r.Header["Authorization"] = []string{"token " + apiToken}
+	r.Header.Set("Authorization", "token "+apiToken)
+	if body != nil {
+		r.Header.Set("Content-Type", "application/json")
+	}
 
 	client := &http.Client{}
 	resp, err = client.Do(r)
