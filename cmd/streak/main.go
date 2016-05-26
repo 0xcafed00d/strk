@@ -16,6 +16,11 @@ func main() {
 	}
 
 	for _, v := range *repos {
-		fmt.Println(v.Name)
+		commits, err := streak.GetCommits("simulatedsimian", v.Name, os.Args[1])
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		fmt.Println(v.Name, len(*commits))
 	}
 }
