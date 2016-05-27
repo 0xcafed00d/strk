@@ -18,20 +18,7 @@ func main() {
 	repoChan := make(chan string)
 	commitsChan := make(chan repoCommits)
 
-	go func() {
-		repos, err := streak.GetRepos("simulatedsimian", os.Args[1])
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-
-		for _, v := range *repos {
-			repoChan <- v.Name
-		}
-		close(repoChan)
-	}()
-
-	for n := 0; n < 16; n++ {
+	for n := 0; n < 8; n++ {
 		go func(n int) {
 			log.Println("Staring go func", n)
 			for {
@@ -52,7 +39,20 @@ func main() {
 		}(n)
 	}
 
-	for {
+	repos, err := streak.GetRepos("simulatedsimian", os.Args[1])
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	go func() {
+		for _, v := range *repos {
+			repoChan <- v.Name
+		}
+		close(repoChan)
+	}()
+
+	for n := 0; n < len(*repos); n++ {
 		res := <-commitsChan
 		log.Println(res.repoName, len(*res.CommitsJSON))
 	}
