@@ -11,6 +11,7 @@ import (
 type repoCommits struct {
 	repoName string
 	*streak.CommitsJSON
+	err error
 }
 
 func main() {
@@ -21,19 +22,10 @@ func main() {
 	for n := 0; n < 8; n++ {
 		go func(n int) {
 			log.Println("Staring go func", n)
-			for {
-				name := <-repoChan
-				if name == "" {
-					break
-				}
+			for name := <-repoChan; name != ""; name = <-repoChan {
 				log.Println("Fetching commits for repo: ", name)
-
 				commits, err := streak.GetCommits("simulatedsimian", name, os.Args[1])
-				if err != nil {
-					fmt.Println(err)
-					os.Exit(1)
-				}
-				commitsChan <- repoCommits{name, commits}
+				commitsChan <- repoCommits{name, commits, err}
 			}
 			log.Println("End go func", n)
 		}(n)
@@ -45,6 +37,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	(*repos)[4].Name = "wibble"
+
 	go func() {
 		for _, v := range *repos {
 			repoChan <- v.Name
@@ -54,6 +48,10 @@ func main() {
 
 	for n := 0; n < len(*repos); n++ {
 		res := <-commitsChan
-		log.Println(res.repoName, len(*res.CommitsJSON))
+		if res.err != nil {
+			log.Println(res.repoName, res.err)
+		} else {
+			log.Println(res.repoName, len(*res.CommitsJSON))
+		}
 	}
 }
