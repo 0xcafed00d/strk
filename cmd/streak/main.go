@@ -37,8 +37,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	(*repos)[4].Name = "wibble"
-
 	go func() {
 		for _, v := range *repos {
 			repoChan <- v.Name
@@ -46,12 +44,16 @@ func main() {
 		close(repoChan)
 	}()
 
+	m := make(map[string]repoCommits)
+
 	for n := 0; n < len(*repos); n++ {
 		res := <-commitsChan
-		if res.err != nil {
-			log.Println(res.repoName, res.err)
-		} else {
-			log.Println(res.repoName, len(*res.CommitsJSON))
+		m[res.repoName] = res
+	}
+
+	for _, v := range m {
+		for i := range *v.CommitsJSON {
+			fmt.Println(v.repoName, (*v.CommitsJSON)[i].Committer.Login, (*v.CommitsJSON)[i].Commit.Author.Date)
 		}
 	}
 }
