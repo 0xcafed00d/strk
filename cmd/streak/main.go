@@ -53,7 +53,8 @@ func main() {
 
 	for _, v := range m {
 		for i := range *v.CommitsJSON {
-			fmt.Println(v.repoName, (*v.CommitsJSON)[i].Committer.Login, (*v.CommitsJSON)[i].Commit.Author.Date)
+			t := (*v.CommitsJSON)[i].Commit.Author.Date
+			fmt.Println(v.repoName, (*v.CommitsJSON)[i].Committer.Login, t, t.Local())
 		}
 	}
 }
