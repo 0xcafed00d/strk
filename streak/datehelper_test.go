@@ -19,4 +19,16 @@ func TestFromYearDay(t *testing.T) {
 	assert(tm).Equal(fromYearDay(2001, yd))
 
 	assert(isLeap(2016)).Equal(true)
+	assert(isLeap(2015)).Equal(false)
+}
+
+func TestStreak(t *testing.T) {
+	assert := assert.Make(t)
+
+	s := Streak{fromYearDay(2001, 1), fromYearDay(2001, 1), 0}
+	assert(s.Length()).Equal(1)
+	s = Streak{fromYearDay(2001, 1), fromYearDay(2001, 2), 0}
+	assert(s.Length()).Equal(2)
+	s = Streak{fromYearDay(2001, 1), fromYearDay(2002, 1), 0}
+	assert(s.Length()).Equal(366)
 }
