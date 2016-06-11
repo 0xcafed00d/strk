@@ -1,6 +1,7 @@
 package streak
 
 import (
+	"fmt"
 	"sort"
 	"time"
 )
@@ -21,6 +22,13 @@ type Streak struct {
 	firstDay time.Time
 	lastDay  time.Time
 	commits  int
+}
+
+func (s Streak) String() string {
+	return fmt.Sprintf("From: %04d-%02d-%02d, To: %04d-%02d-%02d, Commits: %d",
+		s.firstDay.Year(), s.firstDay.Month(), s.firstDay.Day(),
+		s.lastDay.Year(), s.lastDay.Month(), s.lastDay.Day(),
+		s.commits)
 }
 
 func (s Streak) Length() int {

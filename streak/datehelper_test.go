@@ -1,6 +1,7 @@
 package streak
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -50,4 +51,6 @@ func TestStreakRec(t *testing.T) {
 	sr.AddCommit(fromYearDay(2015, 365))
 	assert(len(sr.GetStreaks())).Equal(1)
 	assert(sr.GetStreaks()[0].Length()).Equal(4)
+
+	fmt.Println(sr.GetStreaks()[0])
 }
