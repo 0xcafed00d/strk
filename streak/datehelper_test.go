@@ -32,3 +32,22 @@ func TestStreak(t *testing.T) {
 	s = Streak{fromYearDay(2001, 1), fromYearDay(2002, 1), 0}
 	assert(s.Length()).Equal(366)
 }
+
+func TestStreakRec(t *testing.T) {
+	assert := assert.Make(t)
+
+	sr := StreakRecorder{}
+
+	assert(len(sr.GetStreaks())).Equal(0)
+	sr.AddCommit(fromYearDay(2016, 1))
+	assert(len(sr.GetStreaks())).Equal(0)
+	sr.AddCommit(fromYearDay(2016, 2))
+	assert(len(sr.GetStreaks())).Equal(1)
+	assert(sr.GetStreaks()[0].Length()).Equal(2)
+	sr.AddCommit(fromYearDay(2016, 3))
+	assert(len(sr.GetStreaks())).Equal(1)
+	assert(sr.GetStreaks()[0].Length()).Equal(3)
+	sr.AddCommit(fromYearDay(2015, 365))
+	assert(len(sr.GetStreaks())).Equal(1)
+	assert(sr.GetStreaks()[0].Length()).Equal(4)
+}
