@@ -16,22 +16,27 @@ type repoCommits struct {
 
 func main() {
 
+	if len(os.Args) != 3 {
+		fmt.Fprintln(os.Stderr, "usage: streak <username> <apikey>")
+		os.Exit(1)
+	}
+	key := os.Args[2]
+	username := os.Args[1]
+
 	repoChan := make(chan string)
 	commitsChan := make(chan repoCommits)
 
 	for n := 0; n < 8; n++ {
 		go func(n int) {
-			log.Println("Staring go func", n)
 			for name := <-repoChan; name != ""; name = <-repoChan {
 				log.Println("Fetching commits for repo: ", name)
-				commits, err := streak.GetCommits("simulatedsimian", name, os.Args[1])
+				commits, err := streak.GetCommits(username, name, key)
 				commitsChan <- repoCommits{name, commits, err}
 			}
-			log.Println("End go func", n)
 		}(n)
 	}
 
-	repos, err := streak.GetRepos("simulatedsimian", os.Args[1])
+	repos, err := streak.GetRepos("simulatedsimian", key)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -51,10 +56,20 @@ func main() {
 		m[res.repoName] = res
 	}
 
+	sr := streak.StreakRecorder{}
+
 	for _, v := range m {
 		for i := range *v.CommitsJSON {
-			t := (*v.CommitsJSON)[i].Commit.Author.Date
-			fmt.Println(v.repoName, (*v.CommitsJSON)[i].Committer.Login, t, t.Local())
+			if (*v.CommitsJSON)[i].Committer.Login == username {
+				t := (*v.CommitsJSON)[i].Commit.Author.Date
+				sr.AddCommit(t)
+			}
 		}
 	}
+
+	longest := streak.LongestStreak(sr.GetStreaks())
+	fmt.Println("Longest Streak: ", longest)
+
+	user := streak.UserPatchBioJSON{Bio: "Longest Streak: " + longest.String()}
+	streak.UpdateUser(user, key)
 }

@@ -14,6 +14,10 @@ type UserPatchJSON struct {
 	Bio      string `json:"bio"`
 }
 
+type UserPatchBioJSON struct {
+	Bio string `json:"bio"`
+}
+
 type UserJSON struct {
 	Login             string    `json:"login"`
 	ID                int       `json:"id"`

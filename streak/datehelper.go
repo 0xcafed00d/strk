@@ -25,7 +25,8 @@ type Streak struct {
 }
 
 func (s Streak) String() string {
-	return fmt.Sprintf("From: %04d-%02d-%02d, To: %04d-%02d-%02d, Commits: %d",
+	return fmt.Sprintf("%d Days. From %04d-%02d-%02d To %04d-%02d-%02d. Commits: %d",
+		s.Length(),
 		s.firstDay.Year(), s.firstDay.Month(), s.firstDay.Day(),
 		s.lastDay.Year(), s.lastDay.Month(), s.lastDay.Day(),
 		s.commits)
@@ -33,6 +34,16 @@ func (s Streak) String() string {
 
 func (s Streak) Length() int {
 	return int(s.lastDay.Sub(s.firstDay)/Day + 1)
+}
+
+func LongestStreak(streaks []Streak) Streak {
+	longest := streaks[0]
+	for _, s := range streaks {
+		if s.Length() > longest.Length() {
+			longest = s
+		}
+	}
+	return longest
 }
 
 type StreakRecorder struct {
